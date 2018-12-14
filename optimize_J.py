@@ -129,13 +129,14 @@ def migration(Pipes, island_id, nb_of_island, population, migration_nb):
 
 
 def main(Pipes, island_id, nb_of_island):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
-    parser.add_argument('--seed', type=int, default=t.time())
-    args = parser.parse_args()
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
+    #parser.add_argument('--seed', type=int, default=t.time())
+    #args = parser.parse_args()
 
-    np.random.seed(int(t.time()))
-
+    smifile = '250k_rndm_zinc_drugs_clean.smi'
+    #np.random.seed(int(t.time()))
+    np.random.seed(0)
     global best_smiles
     global best_score
     global all_smiles
@@ -147,7 +148,7 @@ def main(Pipes, island_id, nb_of_island):
 
     # initialize population
     seed_smiles = []
-    with open(args.smifile) as f:
+    with open(smifile) as f:
         for line in f:
             smiles = line.rstrip()
             seed_smiles.append(smiles)
@@ -170,8 +171,8 @@ def main(Pipes, island_id, nb_of_island):
     print("Start!")
     all_smiles = [p[1] for p in population]
 
-    mig_interval = 5 # A migration every 1000 iteration
-    x = [ i for i in range(0,1000000000,mig_interval)] # All the generation in wich a migration should occur
+    mig_interval = 1000 # A migration every 1000 iteration
+    x = [ i for i in range(1000,1000000000,mig_interval)] # All the generation in wich a migration should occur
     k = 1 # First migration
     t0=t.time()
     for generation in range(1000000000):
