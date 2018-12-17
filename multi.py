@@ -25,9 +25,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', type=int, default=3,
         help='Number of islands, i.e. number of Genetic Algorithm excuted in parallel')
-    parser.add_argument('-m', type=int, default=5,
+    parser.add_argument('-m', type=int, default=1000,
                         help='Interval between each migration')
-    parser.add_argument('-e', type=int, default=1000,
+    parser.add_argument('-e', type=int, default=5,
                         help='Pourcentage of emigrants in each migration')
     args = parser.parse_args()
 

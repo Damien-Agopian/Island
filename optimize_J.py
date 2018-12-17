@@ -135,8 +135,8 @@ def main(Pipes, island_id, nb_of_island):
     #args = parser.parse_args()
 
     smifile = '250k_rndm_zinc_drugs_clean.smi'
-    #np.random.seed(int(t.time()))
-    np.random.seed(0)
+    np.random.seed(int(t.time() + island_id))
+    #np.random.seed(0)
     global best_smiles
     global best_score
     global all_smiles
@@ -158,7 +158,7 @@ def main(Pipes, island_id, nb_of_island):
     initial_genes = [CFGtoGene(cfg_util.encode(s), max_len=gene_length)
                      for s in initial_smiles]
     initial_scores = [score_util.calc_score(s) for s in initial_smiles]
-    print(initial_scores)
+    #print(initial_scores)
     population = []
     for score, gene, smiles in zip(initial_scores, initial_genes,
                                    initial_smiles):
@@ -170,7 +170,7 @@ def main(Pipes, island_id, nb_of_island):
     th.start()
     print("Start!")
     all_smiles = [p[1] for p in population]
-    print([p[0] for p in population])
+    #print([p[0] for p in population])
     mig_interval = 1000 # A migration every 1000 iteration
     x = [ i for i in range(1000,1000000000,mig_interval)] # All the generation in wich a migration should occur
     k = 1 # First migration
@@ -205,7 +205,7 @@ def main(Pipes, island_id, nb_of_island):
 
         # Every mig_interval generation make
         if generation in x:
-            print('launch mig')
+            print('Starting Migration')
             if k >= nb_of_island:
                 k = 1
             population = migration(Pipes, island_id, nb_of_island, population, k)
