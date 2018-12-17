@@ -4,9 +4,18 @@ import os
 import argparse
 import numpy as np
 import pandas as pd
+
+from rdkit import Chem
+from rdkit import rdBase
+
+import cfg_util
+import score_util
+import zinc_grammar
+
 import optimize_J
 
-
+rdBase.DisableLog('rdApp.error')
+GCFG = zinc_grammar.GCFG
 
 def f(i):
     print('id :',i,'\n','process: ',os.getpid())
