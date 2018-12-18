@@ -45,7 +45,7 @@ def main():
 
     pool = []
     for i in range(N_islands):
-        p = Process(target=optimize_J.main, args=(Pipes, i, N_islands,))
+        p = Process(target=optimize_J.main, args=(Pipes, i, N_islands,N_migrations))
         p.start()
         pool.append(p)
     
