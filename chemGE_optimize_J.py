@@ -3,9 +3,10 @@ import argparse
 import copy
 import nltk
 import threading
-import time as t
-import numpy as np
+
+import time as ti
 import pandas as pd
+import numpy as np
 from rdkit import Chem
 from rdkit import rdBase
 
@@ -43,7 +44,6 @@ def GenetoCFG(gene):
             break
         possible_rules = [idx for idx, rule in enumerate(GCFG.productions())
                           if rule.lhs() == lhs]
-        #print(possible_rules)
         rule = possible_rules[g % len(possible_rules)]
         prod_rules.append(rule)
         rhs = filter(lambda a: (type(a) == nltk.grammar.Nonterminal)
@@ -100,56 +100,27 @@ def current_best():
     t = threading.Timer(60, current_best, [])
     t.start()
 
-def migration(Pipes, island_id, nb_of_island, population, migration_nb):
-    # Pipes is an array containing every pipe between every islands
-    # island_id, the number of the island
-    # population the current population (score,smile,gene)
-    # migration_nb the migration number, e.g. the k-th migration can be 1 to len(island)-1
 
-    k = migration_nb #between 1 and number of island
-    island_list = [i for i in range(nb_of_island)]
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
+    parser.add_argument('--seed', type=int, default=int(ti.time()))
+    args = parser.parse_args()
 
-    top5 = round(0.05*len(population))
-    for i in island_list:
-        if i==island_id:
-            j = i-k
-            (Pipes.iloc[i,j])[0].send(population[0:top5])
-            print('send from island ',island_id,' with i and j: ',i,j)
-            # recv
-            j += k
-            i += k
-            if i>=nb_of_island : 
-                i = i - nb_of_island
-            migrants = (Pipes.iloc[i,j])[1].recv()
-            print('recv from island',island_id)
-            population = population[:len(population)-top5] + migrants 
-        else :
-            pass
+    np.random.seed(args.seed)
 
-    return population
-
-
-def main(Pipes, island_id, nb_of_island,mig_interval):
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
-    #parser.add_argument('--seed', type=int, default=t.time())
-    #args = parser.parse_args()
-
-    smifile = '250k_rndm_zinc_drugs_clean.smi'
-    np.random.seed(int(t.time() + island_id))
-    #np.random.seed(0)
     global best_smiles
     global best_score
     global all_smiles
 
     gene_length = 300
 
-    N_mu = int(100/nb_of_island)
-    N_lambda = int(200/nb_of_island)
+    N_mu = 100
+    N_lambda = 200
 
     # initialize population
     seed_smiles = []
-    with open(smifile) as f:
+    with open(args.smifile) as f:
         for line in f:
             smiles = line.rstrip()
             seed_smiles.append(smiles)
@@ -159,7 +130,7 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
     initial_genes = [CFGtoGene(cfg_util.encode(s), max_len=gene_length)
                      for s in initial_smiles]
     initial_scores = [score_util.calc_score(s) for s in initial_smiles]
-    #print(initial_scores)
+
     population = []
     for score, gene, smiles in zip(initial_scores, initial_genes,
                                    initial_smiles):
@@ -167,15 +138,11 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
 
     population = sorted(population, key=lambda x: x[0], reverse=True)[:N_mu]
 
-    th = threading.Timer(60, current_best, [])
-    th.start()
+    t = threading.Timer(60, current_best, [])
+    t.start()
     print("Start!")
     all_smiles = [p[1] for p in population]
-    #print([p[0] for p in population])
-    #mig_interval = 5 # A migration every 1000 iteration
-    x = [ i for i in range(mig_interval,1000000000,mig_interval)] # All the generation in wich a migration should occur
-    k = 1 # First migration
-    t0=t.time()
+    t0 = ti.time()
     for generation in range(1000000000):
         scores = [p[0] for p in population]
         mean_score = np.mean(scores)
@@ -203,19 +170,13 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
         population.extend(new_population)
         population = sorted(population,
                             key=lambda x: x[0], reverse=True)[:N_mu]
-
-        # Every mig_interval generation make
-        if generation in x:
-            print('Starting Migration')
-            if k >= nb_of_island:
-                k = 1
-            population = migration(Pipes, island_id, nb_of_island, population, k)
-            k+=1
-        if t.time() - t0 >= 3600*8 :
+        if ti.time() - t0 >= 3600*8:
             break
-    f = open(str(island_id)+'_final_pop.csv','w')
     population = pd.DataFrame(population)
+    f = open('chemGE.csv','w')
     population.to_csv(f)
     f.close()
+    t.join()
+
 if __name__ == "__main__":
     main()
