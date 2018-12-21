@@ -104,7 +104,7 @@ def current_best():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
-    parser.add_argument('--seed', type=int, default=int(ti.time()))
+    parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
 
     np.random.seed(args.seed)
@@ -115,8 +115,8 @@ def main():
 
     gene_length = 300
 
-    N_mu = 100
-    N_lambda = 200
+    N_mu = 1000
+    N_lambda = 2000
 
     # initialize population
     seed_smiles = []

@@ -136,7 +136,7 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
     #args = parser.parse_args()
 
     smifile = '250k_rndm_zinc_drugs_clean.smi'
-    np.random.seed(int(t.time() + island_id))
+    np.random.seed(0 + island_id)
     #np.random.seed(0)
     global best_smiles
     global best_score
@@ -144,8 +144,8 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
 
     gene_length = 300
 
-    N_mu = int(100/nb_of_island)
-    N_lambda = int(200/nb_of_island)
+    N_mu = int(1000/nb_of_island)
+    N_lambda = int(2000/nb_of_island)
 
     # initialize population
     seed_smiles = []
