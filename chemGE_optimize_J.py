@@ -104,7 +104,7 @@ def current_best():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
-    parser.add_argument('--seed', type=int, default=ti.time())
+    parser.add_argument('--seed', type=int, default=int(ti.time()))
     args = parser.parse_args()
 
     np.random.seed(args.seed)
@@ -176,6 +176,7 @@ def main():
     f = open('chemGE.csv','w')
     population.to_csv(f)
     f.close()
+    t.join()
 
 if __name__ == "__main__":
     main()
