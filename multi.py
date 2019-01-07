@@ -29,6 +29,8 @@ def main():
                         help='Interval between each migration')
     parser.add_argument('-e', type=int, default=5,
                         help='Pourcentage of emigrants in each migration')
+    parser.add_argument('-n', type=int, default=-1,
+                        help='In case you are doing repetability test, equals to the n-th test ')
     args = parser.parse_args()
 
     N_islands = args.i
@@ -45,7 +47,7 @@ def main():
 
     pool = []
     for i in range(N_islands):
-        p = Process(target=optimize_J.main, args=(Pipes, i, N_islands,N_migrations))
+        p = Process(target=optimize_J.main, args=(Pipes, i, N_islands,N_migrations,args.n))
         p.start()
         pool.append(p)
     

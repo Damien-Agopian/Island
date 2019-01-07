@@ -129,14 +129,17 @@ def migration(Pipes, island_id, nb_of_island, population, migration_nb):
     return population
 
 
-def main(Pipes, island_id, nb_of_island,mig_interval):
+def main(Pipes, island_id, nb_of_island,mig_interval, logn=-1):
     #parser = argparse.ArgumentParser()
     #parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
     #parser.add_argument('--seed', type=int, default=t.time())
     #args = parser.parse_args()
 
     smifile = '250k_rndm_zinc_drugs_clean.smi'
-    np.random.seed(0 + island_id)
+    if logn == -1:
+        np.random.seed(0 + island_id)
+    else:
+        np.random.seed(int(t.time()))
     #np.random.seed(0)
     global best_smiles
     global best_score
@@ -213,7 +216,10 @@ def main(Pipes, island_id, nb_of_island,mig_interval):
             k+=1
         if t.time() - t0 >= 3600*8 :
             break
-    f = open(str(island_id)+'_final_pop.csv','w')
+    if logn == -1:
+        f = open(str(island_id)+'_final_pop'+'_'+str(nb_of_island)+'_'+str(mig_interval)+'.csv','w')
+    if logn != -1:
+        f = open(str(island_id)+'_final_pop'+'_'+str(nb_of_island)+'_'+str(mig_interval)+'_'+str(logn)+'.csv','w')
     population = pd.DataFrame(population)
     population.to_csv(f)
     f.close()

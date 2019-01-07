@@ -104,10 +104,10 @@ def current_best():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
-    parser.add_argument('--seed', type=int, default=0)
+    #parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
 
-    np.random.seed(args.seed)
+    np.random.seed(0)
 
     global best_smiles
     global best_score
