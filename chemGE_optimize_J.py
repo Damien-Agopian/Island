@@ -14,6 +14,8 @@ import cfg_util
 import score_util
 import zinc_grammar
 
+from multiprocessing import Process
+
 rdBase.DisableLog('rdApp.error')
 GCFG = zinc_grammar.GCFG
 
@@ -101,13 +103,15 @@ def current_best():
     t.start()
 
 
-def main():
+def main(n=0):
     parser = argparse.ArgumentParser()
     parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
     #parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('-a', type=int, default=0)
     args = parser.parse_args()
 
-    np.random.seed(0)
+    #np.random.seed(0)
+    np.random.seed(int(ti.time()))
 
     global best_smiles
     global best_score
@@ -173,10 +177,17 @@ def main():
         if ti.time() - t0 >= 3600*8:
             break
     population = pd.DataFrame(population)
-    f = open('chemGE.csv','w')
+    f = open(str(i)+'_chemGE.csv','w')
     population.to_csv(f)
     f.close()
     t.join()
 
 if __name__ == "__main__":
-    main()
+    if args.a == 1:
+        for i in range(10):
+            p = Process(target=main,args=(i,))
+            p.start()
+
+    else:
+        main()
+    
