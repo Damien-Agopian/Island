@@ -33,9 +33,10 @@ def main():
         print('best score: ',max(score))    
         #print(score)
     if alg == 'chem':
-        tab = pd.read_csv('chemGE.csv')
+        
+        tab = pd.read_csv(str(N_island)+'_chemGE.csv')
         ms += list(tab.iloc[:,2])
-
+        score += list(tab.iloc[:,1])
         fps = [FingerprintMols.FingerprintMol(Chem.MolFromSmiles(x)) for x in ms]
 
         t = 0.0
@@ -43,7 +44,7 @@ def main():
             for y in fps:
                 t += 1-DataStructs.FingerprintSimilarity(x, y, metric=DataStructs.TanimotoSimilarity)
         print('diversity: ',t/(len(fps)*len(fps)))
-
+        print('best score: ',max(score))
 
 if __name__ == '__main__':
     main()

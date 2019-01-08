@@ -107,7 +107,7 @@ def main(n=0):
     parser = argparse.ArgumentParser()
     parser.add_argument('--smifile', default='250k_rndm_zinc_drugs_clean.smi')
     #parser.add_argument('--seed', type=int, default=0)
-    parser.add_argument('-a', type=int, default=0)
+    
     args = parser.parse_args()
 
     #np.random.seed(0)
@@ -183,11 +183,8 @@ def main(n=0):
     t.join()
 
 if __name__ == "__main__":
-    if args.a == 1:
-        for i in range(10):
-            p = Process(target=main,args=(i,))
-            p.start()
+    for i in range(10):
+        p = Process(target=main,args=(i,))
+        p.start()
 
-    else:
-        main()
-    
+        
